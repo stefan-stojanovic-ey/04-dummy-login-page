@@ -6,16 +6,36 @@ import Button from "../UI/Button/Button";
 
 const Login = (props) => {
   const [enteredEmail, setEnteredEmail] = useState("");
-  const [emailIsValid, setEmailIsValid] = useState();
+  const [emailIsValid, setEmailIsValid] = useState(true);
   const [enteredPassword, setEnteredPassword] = useState("");
-  const [passwordIsValid, setPasswordIsValid] = useState();
+  const [passwordIsValid, setPasswordIsValid] = useState(true);
   const [formIsValid, setFormIsValid] = useState(false);
 
-  useEffect(() => {
-    const validEmail = enteredEmail.includes("@");
-    const validPass = enteredPassword.length > 6;
+  console.error("Component rendered...");
 
-    setFormIsValid(validEmail && validPass);
+  useEffect(() => {
+    console.log("useEffect runs...");
+    const timerId = setTimeout(() => {
+      console.warn("isFormValid state will update...");
+      const validEmail = enteredEmail.includes("@");
+      const validPass = enteredPassword.length > 6;
+
+      setFormIsValid((prev) => {
+        const val = validEmail && validPass;
+        console.log(
+          prev === val
+            ? "No new formIsValid state changes"
+            : `formIsValid state: ${prev} ---> ${val}`
+        );
+        return val;
+      });
+    }, 1000);
+
+    // debounce cleanup fn
+    return () => {
+      console.log("Cleanup fn runs...");
+      clearTimeout(timerId);
+    };
   }, [enteredEmail, enteredPassword]);
 
   // validacija email-a
@@ -31,23 +51,63 @@ const Login = (props) => {
   const emailChangeHandler = (e) => {
     const val = e.target.value;
 
-    setEnteredEmail(val);
-    setEmailIsValid(validEmailCheck(val));
+    setEnteredEmail((prev) => {
+      console.log(`enteredEmail state: ${prev} ---> ${val}`);
+      return val;
+    });
+
+    setEmailIsValid((prev) => {
+      const valid = validEmailCheck(val);
+      console.log(
+        prev === valid
+          ? "No new emailIsValid state changes"
+          : `emailIsValid state: ${prev} ---> ${valid}`
+      );
+      return valid;
+    });
   };
 
   const passwordChangeHandler = (e) => {
     const val = e.target.value;
 
-    setEnteredPassword(val);
-    setPasswordIsValid(validPassCheck(val));
+    setEnteredPassword((prev) => {
+      console.log(`enteredPassword state: ${prev} ---> ${val}`);
+      return val;
+    });
+
+    setPasswordIsValid((prev) => {
+      const valid = validPassCheck(val);
+      console.log(
+        prev === valid
+          ? "No new passwordIsValid state changes"
+          : `passwordIsValid state: ${prev} ---> ${val}`
+      );
+      return valid;
+    });
   };
 
   const validateEmailHandler = () => {
-    setEmailIsValid(validEmailCheck(enteredEmail));
+    setEmailIsValid((prev) => {
+      const valid = validEmailCheck(enteredEmail);
+      console.log(
+        prev === valid
+          ? "No new emailIsValid state changes"
+          : `emailIsValid state: ${prev} ---> ${valid}`
+      );
+      return valid;
+    });
   };
 
   const validatePasswordHandler = () => {
-    setPasswordIsValid(enteredPassword.trim().length > 6);
+    setPasswordIsValid((prev) => {
+      const valid = enteredPassword.trim().length > 6;
+      console.log(
+        prev === valid
+          ? "No new passwordIsValid state changes"
+          : `passwordIsValid state: ${prev} ---> ${valid}`
+      );
+      return valid;
+    });
   };
 
   const submitHandler = (e) => {
@@ -60,7 +120,7 @@ const Login = (props) => {
       <form onSubmit={submitHandler}>
         <div
           className={`${classes.control} ${
-            emailIsValid === false ? classes.invalid : ""
+            !emailIsValid ? classes.invalid : ""
           }`}
         >
           <label htmlFor="email">E-Mail</label>
@@ -74,7 +134,7 @@ const Login = (props) => {
         </div>
         <div
           className={`${classes.control} ${
-            passwordIsValid === false ? classes.invalid : ""
+            !passwordIsValid ? classes.invalid : ""
           }`}
         >
           <label htmlFor="password">Password</label>
