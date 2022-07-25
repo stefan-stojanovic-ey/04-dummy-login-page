@@ -34,8 +34,20 @@
 
 .control input:focus {
   outline: none;
-  border: 2px solid #4f005f;
+  border: 1px solid #4f005f;
   /* background: #f6dbfc; */
+}
+
+/*
+  deblji borderi mogu da izazivaju "jump" u elementima
+  ili moram da uzmem u obzir ovo kada namestam visinu parent elementa ili tog diva
+  ili da umesto debljeg bordera namestim box-shadow inset (shadow ka unutra)
+  dobija se isti efekat ali se box-shadow ne dodaje na sirinu i visinu elementa i time ne pravi taj problem
+*/
+.control.invalid input:focus {
+  box-shadow: 0px 0px 0px 2px rgba(255, 0, 0, 0.75) inset;
+  -webkit-box-shadow: 0px 0px 0px 2px rgba(255, 0, 0, 0.75) inset;
+  -moz-box-shadow: 0px 0px 0px 2px rgba(255, 0, 0, 0.75) inset;
 }
 
 .control.invalid input {
